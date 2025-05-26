@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>회원가입 페이지</title>
+  </head>
+  <body style="text-align: center">
+    <h1>회원가입 페이지</h1>
+    <form id="userForm">
+      <input type="text" id="id" name="id" placeholder="아이디" required />
+      <br />
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="비밀번호"
+        required
+      />
+      <br />
+      <button type="submit">회원가입</button>
+      <button type="button" id="main">메인페이지</button>
+    </form>
+    <hr />
+    <div id="result"></div>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
+    <script>
+      // 사용자 등록 폼 제출 시 실행
+      // id, password를 입력받아 /users API에 POST 요청을 보냄
+      document
+        .getElementById('userForm')
+        .addEventListener('submit', async function (e) {
+          e.preventDefault() // 폼의 기본 제출 동작(새로고침) 방지
+          const id = document.getElementById('id').value // 입력된 아이디 값
+          const password = document.getElementById('password').value // 입력된 비밀번호 값
+          // 비밀번호를 SHA-256 해시로 변환
+          const hashpassword = CryptoJS.SHA256(id + password).toString()
+
+          // /users 엔드포인트로 POST 요청 (사용자 추가)
+          const res = await fetch('/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, hashpassword }),
+          })
+          const data = await res.json() // 응답 데이터 파싱
+          // 결과 메시지를 화면에 표시
+          document.getElementById('result').innerText =
+            data.message || JSON.stringify(data)
+
+          // 회원가입 성공 시 알림 후 main으로 이동
+          if (data.success) {
+            alert('회원가입에 성공했습니다!')
+            window.location.href = '/main' // index.html로 이동
+          } else {
+            // 회원가입 실패 시 알림
+            alert('회원가입에 실패')
+          }
+        })
+      // 버튼 클릭 시 index.html로 이동
+      document.getElementById('main').addEventListener('click', function () {
+        window.location.href = '/main' // index.html로 이동
+      })
+    </script>
+  </body>
+</html>
