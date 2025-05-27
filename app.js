@@ -177,6 +177,23 @@ app.post('/deleteUser', isAuthenticated, (req, res) => {
   })
 })
 
+// POST /resetChat : 관리자 전용, 채팅 기록 초기화
+app.post('/resetChat', (req, res) => {
+  if (req.session.userId !== 'admin') {
+    return res.json({ success: false, message: '권한이 없습니다.' })
+  }
+  db.query('TRUNCATE TABLE test.chat', (err) => {
+    if (err) {
+      return res.json({
+        success: false,
+        message: 'DB 오류',
+        error: err.message,
+      })
+    }
+    res.json({ success: true })
+  })
+})
+
 // 서버 실행 및 포트에서 대기
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
