@@ -12,11 +12,19 @@ const HOST = '0.0.0.0' // 외부 접속을 허용
 app.use(express.json()) // JSON 형태로 전달된 req.body를 파싱
 app.use(chatRouter) // chat.js연결
 app.use(express.static(path.join(__dirname))) // 현재 폴더를 정적 폴더로 지정
+// app.use(
+//   session({
+//     secret: 'mySecretKey', // 원하는 임의의 문자열
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: { maxAge: 1000 * 60 * 60 }, // 1시간
+//   })
+// )
 app.use(
   session({
-    secret: 'mySecretKey', // 원하는 임의의 문자열
+    secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     cookie: { maxAge: 1000 * 60 * 60 }, // 1시간
   })
 )
