@@ -1,4 +1,5 @@
 // mysql.js
+require('dotenv').config() // 환경 변수 설정
 const mysql = require('mysql2')
 
 const connection = mysql.createConnection({
